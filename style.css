@@ -2,10 +2,19 @@ html,
 body {
   margin: 0;
   padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 canvas {
+  display: block;
+}
+
+#centred-div {
+  width: 100vw;
+  height: 100vw;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
