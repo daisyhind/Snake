@@ -11,11 +11,30 @@ function Snake() {
 
     mySelect = createSelect();
     mySelect.position(0, 600);
-    mySelect.option("Level 1");
-    mySelect.option("Level 2");
-    mySelect.option("Level 3");
-    mySelect.option("Level 4");
-    mySelect.option("Level 5");
+    mySelect.style('font-size', '20px');
+    mySelect.style('padding', '5px 10px');
+    mySelect.style('border-radius', '10px');
+    mySelect.style('border', 'none');
+    mySelect.style('background-color', '#4CAF50');
+    mySelect.style('color', 'white');
+    mySelect.style('font-family', 'Helvetica');
+    mySelect.style('transition', 'opacity 0.3s');
+    mySelect.position(width / 2 - 40, 400);
+
+    mySelect.mouseOver(() => {
+        mySelect.style('background-color', '#45a049');
+    });
+
+    mySelect.mouseOut(() => {
+        mySelect.style('background-color', '#4CAF50');
+    });
+
+
+    mySelect.option("Level 1", 1);
+    mySelect.option("Level 2", 2);
+    mySelect.option("Level 3", 3);
+    mySelect.option("Level 4", 4);
+    mySelect.option("Level 5", 5);
 
     mySelect.selected("Level 1");
 
@@ -56,6 +75,10 @@ function Snake() {
                 this.xspeed = 0;
                 this.yspeed = 0;
                 background(255, 0, 0);
+                standby = true;
+                createWallGrid(level);
+                snake = new Snake();
+                pickLocation();
             }
         }
 

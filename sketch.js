@@ -8,7 +8,9 @@ let snake;
 let grid = 20;
 let wallGrid = [];
 
-let level;
+let level = 1;
+
+let levelS;
 
 let food;
 let canvasSize = 600;
@@ -16,13 +18,14 @@ let score;
 let munch;
 
 let highscore = 0;
+let highscoreP;
 
 let cellSize = canvasSize / grid;
 let numberOfCells;
 
 let mySelect;
 
-let standby;
+let standby = true;
 let playing;
 
 function preload() {
@@ -30,7 +33,8 @@ function preload() {
 }
 
 function createWallGrid(level = 1) {
-  numberOfCells = width / grid;
+  wallGrid = [];
+  numberOfCells = canvasSize / grid;
 
   if (level === 1) {
     for (let i = 0; i < numberOfCells; i++) {
@@ -40,7 +44,7 @@ function createWallGrid(level = 1) {
         let y = j * grid;
         // if (wallGrid[i].push(1)) {
         // } else {
-          wallGrid[i].push(0);
+        wallGrid[i].push(0);
         // }
       }
     }
@@ -50,6 +54,7 @@ function createWallGrid(level = 1) {
     for (let i = 0; i < numberOfCells; i++) {
       wallGrid.push([]);
       for (let j = 0; j < numberOfCells; j++) {
+        console.log('updating wall grid?');
         let x = i * grid;
         let y = j * grid;
         if (
@@ -78,7 +83,7 @@ function createWallGrid(level = 1) {
           (j >= 0 && j <= 9 && i === 0) ||
           (j >= 20 && j <= 29 && i === 0) ||
           (j >= 0 && j <= 9 && i === 29) ||
-          (j >= 20 && i <= 29 && i === 29)
+          (j >= 20 && j <= 29 && i === 29)
         ) {
           wallGrid[i].push(1);
         } else {
@@ -95,12 +100,12 @@ function createWallGrid(level = 1) {
         let y = j * grid;
         if (
           (i >= 0 && i <= 13 && j === 0) ||
-          (i >= 17 && i <= 29 && j === 0) ||
-          (i >= 0 && i <= 13 && j === 29) ||
-          (i >= 17 && i <= 29 && j === 29) ||
+          (i >= 17 && i <= numberOfCells - 1 && j === 0) ||
+          (i >= 0 && i <= 13 && j === numberOfCells - 1) ||
+          (i >= 17 && i <= numberOfCells - 1 && j === numberOfCells - 1) ||
           i === 0 ||
-          i === 29
-        ) {
+          i === numberOfCells - 1
+        ){
           wallGrid[i].push(1);
         } else {
           wallGrid[i].push(0);
@@ -143,21 +148,25 @@ function setup() {
     .position(282, 155)
     .style("font-size: 100px; opacity: 0.3; font-family: Helvetica;");
 
-  highscore = localStorage.getItem("highscore") || 0;
+  highscore = localStorage.getItem("Highscore") || 0;
 
-  highscore = createP("Highscore: " + highscore)
-    .position(10, 10)
+  highscoreP = createP("Highscore: " + highscore)
+    .position(30, 10)
     .style(
       "font-size: 20px; opacity: 0.3; font-family: Helvetica; color: white"
     );
 }
 
 function draw() {
+  checkSelect();
   console.log('draw');
   background(35);
 
-  function playing(){
-    selectLevel.hide();
+  if (standby){
+    mySelect.style("opacity", 1);
+  } else {
+    mySelect.style("opacity", 0);
+
   }
 
   for (let i = 0; i < numberOfCells; i++) {
@@ -208,6 +217,8 @@ function draw() {
 // global event keyPressed which uses the in-built variable keyCode
 // sets the direction using an if else loop
 function keyPressed() {
+  standby = false;
+
   if (keyCode === UP_ARROW) {
     snake.direction(0, -1);
   } else if (keyCode === DOWN_ARROW) {
@@ -216,5 +227,15 @@ function keyPressed() {
     snake.direction(1, 0);
   } else if (keyCode === LEFT_ARROW) {
     snake.direction(-1, 0);
+  }
+}
+
+function checkSelect(){
+  let newLevel = mySelect.value();
+  newLevel = Number(newLevel);
+  if( level != newLevel ){
+    level = newLevel;
+    wallGrid = [];
+    createWallGrid(level);
   }
 }
