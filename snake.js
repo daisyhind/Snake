@@ -74,8 +74,11 @@ function Snake() {
                 this.y = 200;
                 this.xspeed = 0;
                 this.yspeed = 0;
-                background(255, 0, 0);
+
                 standby = true;
+
+                // red flash
+                background(255, 0, 0);
                 createWallGrid(level);
                 snake = new Snake();
                 pickLocation();
@@ -113,25 +116,69 @@ function Snake() {
         this.x = this.x + this.xspeed * grid;
         this.y = this.y + this.yspeed * grid;
 
-        // built-in function constrain to contain the snake within the boundaries of the canvas
-        // includes grid so the snake cannot disppear off the border as rectangles are drawn from top-left corner
-        this.x = constrain(this.x, 0, width - grid);
-        this.y = constrain(this.y, 0, height - grid);
-    };
+        // Wrapping if on level 1 (no border)
+        if (level === 1 || level === 2) {
+            if (this.x >= width) this.x = 0;
+            if (this.x < 0) this.x = width - grid;
+            if (this.y >= height) this.y = 0;
+            if (this.y < 0) this.y = height - grid;
+        } else if (level === 3) {
+            // Selective wrap in level 3
 
-    // draws the snake
-    this.show = function () {
-        fill(97, 193, 123);
-        noStroke();
-        for (let i = 0; i < this.tail.length; i++) {
-            rect(this.tail[i].x, this.tail[i].y, grid, grid);
+            let middleStart = 10 * grid;
+            let middleEnd = 20 * grid;
+
+            // Wrap left/right only in vertical middle section
+            if (this.y >= middleStart && this.y < middleEnd) {
+                if (this.x >= width) this.x = 0;
+                if (this.x < 0) this.x = width - grid;
+            } else {
+                this.x = constrain(this.x, 0, width - grid);
+            }
+
+            // Wrap top/bottom only in horizontal middle section
+            if (this.x >= middleStart && this.x < middleEnd) {
+                if (this.y >= height) this.y = 0;
+                if (this.y < 0) this.y = height - grid;
+            } else {
+                this.y = constrain(this.y, 0, height - grid);
+            }
+
+        } else if (level === 4) {
+            // Top/bottom wrap in center gap only
+            let gapStart = 14 * grid;
+            let gapEnd = 16 * grid;
+
+            if (this.x >= gapStart && this.x < gapEnd) {
+                if (this.y >= height) this.y = 0;
+                if (this.y < 0) this.y = height - grid;
+            } else {
+                this.y = constrain(this.y, 0, height - grid);
+            }
+
+            this.x = constrain(this.x, 0, width - grid);
+        } else {
+            // Otherwise, constrain movement to inside canvas (for wall collision checking)
+            // built-in function constrain to contain the snake within the boundaries of the canvas
+            // includes grid so the snake cannot disppear off the border as rectangles are drawn from top-left corner
+            this.x = constrain(this.x, 0, width - grid);
+            this.y = constrain(this.y, 0, height - grid);
         }
-        rect(this.x, this.y, grid, grid);
 
-        // snake eyes
-        fill(0);
-        noStroke();
-        circle(this.x + 8, this.y + 6, 5);
-        circle(this.x + 8, this.y + 14, 5);
-    };
+        // draws the snake
+        this.show = function () {
+            fill(97, 193, 123);
+            noStroke();
+            for (let i = 0; i < this.tail.length; i++) {
+                rect(this.tail[i].x, this.tail[i].y, grid, grid);
+            }
+            rect(this.x, this.y, grid, grid);
+
+            // snake eyes
+            fill(0);
+            noStroke();
+            circle(this.x + 8, this.y + 6, 5);
+            circle(this.x + 8, this.y + 14, 5);
+        }
+    }
 }
